@@ -21,5 +21,8 @@
   "homepage": "https://github.com/GabrielPyva/mini-scada-imi-ta#readme",
   "devDependencies": {
     "electron": "^44.4.1"
+  },
+  "dependencies": {
+    "jsmodbus": "^5.0.0"
   }
 }
