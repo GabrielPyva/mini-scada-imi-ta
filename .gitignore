@@ -1,0 +1,44 @@
+# Dependências
+node_modules/
+jspm_packages/
+
+# Builds e arquivos de distribuição (Electron Builder / Forge)
+/dist/
+/build/
+/release-builds/
+*.dmg
+*.exe
+*.AppImage
+*.deb
+*.rpm
+*.zip
+*.tar.gz
+
+# Logs e arquivos de depuração
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.pids
+*.seed
+
+# Variáveis de ambiente e dados sensíveis
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Pastas de IDE e Editor (VS Code, WebStorm, etc.)
+.vscode/
+.idea/
+*.swp
+*.swo
+.vs/
+
+# Arquivos do Sistema Operacional
+.DS_Store
+Thumbs.db
+Desktop.ini
