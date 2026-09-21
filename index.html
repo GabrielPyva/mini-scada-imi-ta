@@ -7,5 +7,30 @@
 <body>
     <h1>Olá Mundo do Electron!</h1>
     <p>Aplicativo desktop rodando com sucesso.</p>
+
+    <form id="formulary">
+        <input id="value-slider" type="range" value="40" />
+        <output id="slider-value" for="value-slider">150</output>
+    </form>
+
+    <script>
+        const form = document.getElementById('formulary');
+        const slider = document.getElementById('value-slider');
+        const sliderValue = document.getElementById('slider-value');
+        
+        function updateResult() {
+            const output = slider.valueAsNumber;
+            sliderValue.value = output;
+            sendSliderValue();
+        }
+
+        function sendSliderValue () {
+            window.electronAPI.sendSliderValue(Number(sliderValue.value));
+        }
+
+        form.addEventListener('input', updateResult);
+
+        updateResult();
+    </script>
 </body>
 </html>
