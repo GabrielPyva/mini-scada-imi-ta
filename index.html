@@ -2,11 +2,29 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Meu App Electron</title>
+    <title>Mini SCADA</title>
 </head>
 <body>
-    <h1>Olá Mundo do Electron!</h1>
-    <p>Aplicativo desktop rodando com sucesso.</p>
+    <h1>Measured values</h1>
+
+    <dl id="measured-values">
+        <dt>Measured flow (unit 1)</dt>
+        <dd id="MeasuredFlow_unit1">--</dd>
+        <dt>Measured supply temperature (degC)</dt>
+        <dd id="MeasuredSupplyTemp_degC">--</dd>
+        <dt>Measured return temperature (degC)</dt>
+        <dd id="MeasuredReturnTemp_degC">--</dd>
+        <dt>Measured delta T (K)</dt>
+        <dd id="MeasuredDeltaT_K">--</dd>
+        <dt>Measured power (unit 1)</dt>
+        <dd id="MeasuredPower_unit1">--</dd>
+        <dt>Relative measured position</dt>
+        <dd id="RelativeMeasuredPosition">--</dd>
+        <dt>Energy counter regime 1 (unit 1)</dt>
+        <dd id="EnergyCounterRegime1_unit1">--</dd>
+        <dt>Energy counter regime 2 (unit 1)</dt>
+        <dd id="EnergyCounterRegime2_unit1">--</dd>
+    </dl>
 
     <form id="formulary">
         <input id="value-slider" type="range" value="40" />
@@ -29,6 +47,12 @@
         }
 
         form.addEventListener('input', updateResult);
+
+        window.electronAPI.onMeasuredValuesUpdated((values) => {
+            Object.entries(values).forEach(([name, value]) => {
+                document.getElementById(name).textContent = value;
+            });
+        });
 
         updateResult();
     </script>

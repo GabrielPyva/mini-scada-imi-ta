@@ -1,5 +1,8 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  sendSliderValue: (value) => ipcRenderer.send('slider-value-changed', value)
+  sendSliderValue: (value) => ipcRenderer.send('slider-value-changed', value),
+  onMeasuredValuesUpdated: (callback) => {
+    ipcRenderer.on('measured-values-updated', (_event, values) => callback(values))
+  }
 })
