@@ -8,6 +8,7 @@ const MODBUS_PORT = 502
 const UNIT_ID = 1
 const SCAN_RATE = 1000
 const START_ADDRESS = 302
+const REGISTER_122_ADDRESS = 122
 const MEASURED_VALUES_START_ADDRESS = 1050
 const MEASURED_VALUES_REGISTER_COUNT = 16
 
@@ -15,6 +16,7 @@ const socket = new net.Socket()
 const client = new Modbus.client.TCP(socket, UNIT_ID)
 let mainWindow = null
 let pendingValue = 0
+let Register122 = null
 let MeasuredFlow_unit1 = 0
 let MeasuredSupplyTemp_degC = 0
 let MeasuredReturnTemp_degC = 0
@@ -42,6 +44,13 @@ async function readMeasuredValues () {
   if (client.connectionState !== 'online') return null
 
   try {
+    const { response } = await client.readHoldingRegisters(REGISTER_122_ADDRESS, 1)
+    Register122 = response.body.valuesAsBuffer.readUInt16BE(0)
+  } catch (error) {
+    console.error('Modbus register 122 read failed:', error.message)
+  }
+
+  try {
     const { response } = await client.readHoldingRegisters(
       MEASURED_VALUES_START_ADDRESS,
       MEASURED_VALUES_REGISTER_COUNT
@@ -59,6 +68,7 @@ async function readMeasuredValues () {
     EnergyCounterRegime2_unit1 = valueAt(7)
 
     const measuredValues = {
+      Register122,
       MeasuredFlow_unit1,
       MeasuredSupplyTemp_degC,
       MeasuredReturnTemp_degC,
@@ -80,6 +90,21 @@ async function readMeasuredValues () {
   }
 }
 
+function writeRegister122 (value) {
+  if (!Number.isInteger(value) || value < 1 || value > 4) {
+    console.error('Invalid value for Modbus register 122:', value)
+    return
+  }
+
+  if (client.connectionState !== 'online') {
+    console.error('Cannot write Modbus register 122: connection is offline')
+    return
+  }
+
+  client.writeSingleRegister(REGISTER_122_ADDRESS, value)
+    .catch((error) => console.error('Modbus register 122 write failed:', error.message))
+}
+
 function connectModbus () {
   socket.on('connect', () => {
     console.log(`Connected to Modbus TCP ${MODBUS_HOST}:${MODBUS_PORT}`)
@@ -99,6 +124,10 @@ function connectModbus () {
 ipcMain.on('slider-value-changed', (_event, value) => {
   pendingValue = Number(value)
   writeSliderValue()
+})
+
+ipcMain.on('register-122-value-changed', (_event, value) => {
+  writeRegister122(value)
 })
 
 function createWindow () {

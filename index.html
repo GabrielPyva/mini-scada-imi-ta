@@ -3,8 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Mini SCADA</title>
+    <style>
+        #register-122-options button {
+            display: block;
+        }
+    </style>
 </head>
 <body>
+    <section aria-labelledby="register-122-heading">
+        <h2 id="register-122-heading">Control Mode</h2>
+        <button id="register-122-value" type="button" aria-haspopup="listbox" aria-expanded="false">--</button>
+        <div id="register-122-options" role="listbox" aria-label="Register 122 options" hidden>
+            <button type="button" role="option" data-value="1">Flow Control</button>
+            <button type="button" role="option" data-value="2">Power Control</button>
+            <button type="button" role="option" data-value="3">Dp Control</button>
+            <button type="button" role="option" data-value="4">Position Control</button>
+        </div>
+    </section>
+
     <h1>Measured values</h1>
 
     <dl id="measured-values">
@@ -35,6 +51,29 @@
         const form = document.getElementById('formulary');
         const slider = document.getElementById('value-slider');
         const sliderValue = document.getElementById('slider-value');
+        const register122Value = document.getElementById('register-122-value');
+        const register122Options = document.getElementById('register-122-options');
+        const register122Labels = {
+            1: 'Flow Control',
+            2: 'Power Control',
+            3: 'Dp Control',
+            4: 'Position Control'
+        };
+
+        register122Value.addEventListener('click', () => {
+            const isExpanded = register122Value.getAttribute('aria-expanded') === 'true';
+            register122Options.hidden = isExpanded;
+            register122Value.setAttribute('aria-expanded', String(!isExpanded));
+        });
+
+        register122Options.addEventListener('click', (event) => {
+            const option = event.target.closest('[data-value]');
+            if (!option) return;
+
+            window.electronAPI.writeRegister122(Number(option.dataset.value));
+            register122Options.hidden = true;
+            register122Value.setAttribute('aria-expanded', 'false');
+        });
         
         function updateFromSlider() {
             sliderValue.value = slider.value;
@@ -56,6 +95,11 @@
 
         window.electronAPI.onMeasuredValuesUpdated((values) => {
             Object.entries(values).forEach(([name, value]) => {
+                if (name === 'Register122') {
+                    register122Value.textContent = register122Labels[value] ?? value ?? '--';
+                    return;
+                }
+
                 document.getElementById(name).textContent = value;
             });
         });
