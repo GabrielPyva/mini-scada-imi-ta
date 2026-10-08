@@ -1,26 +1,62 @@
 {
   "name": "mini-scada-imi-ta",
   "version": "1.0.0",
-  "description": "",
+  "description": "Mini SCADA application for IMI-TA process monitoring and control",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "release": "electron-builder --publish=never"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/GabrielPyva/mini-scada-imi-ta.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "scada",
+    "modbus",
+    "electron",
+    "industrial"
+  ],
+  "author": "Gabriel Pyva",
   "license": "ISC",
   "type": "commonjs",
+  "build": {
+    "appId": "com.gabrielpyva.mini-scada-imi-ta",
+    "productName": "Mini SCADA IMI-TA",
+    "asar": true,
+    "files": [
+      "**/*",
+      "!**/*.map",
+      "!**/.git/**",
+      "!**/node_modules/**/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/**/{test,tests,__tests__}/**"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ]
+    }
+  },
   "bugs": {
     "url": "https://github.com/GabrielPyva/mini-scada-imi-ta/issues"
   },
   "homepage": "https://github.com/GabrielPyva/mini-scada-imi-ta#readme",
   "devDependencies": {
-    "electron": "^44.4.1"
+    "electron": "^44.4.1",
+    "electron-builder": "^26.15.3"
   },
   "dependencies": {
     "jsmodbus": "^5.0.0"
