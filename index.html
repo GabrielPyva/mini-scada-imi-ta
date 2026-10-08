@@ -4,12 +4,30 @@
     <meta charset="UTF-8">
     <title>Mini SCADA</title>
     <style>
+        #connection-form {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        #connection-status {
+            margin-left: auto;
+        }
+
         #register-122-options button {
             display: block;
         }
     </style>
 </head>
 <body>
+    <form id="connection-form">
+        <label for="modbus-ip">Device IP</label>
+        <input id="modbus-ip" type="text" inputmode="decimal" autocomplete="off" required />
+        <button type="submit">Connect</button>
+        <span id="connection-status" role="status" aria-live="polite">not connected</span>
+    </form>
+
     <section aria-labelledby="register-122-heading">
         <h2 id="register-122-heading">Control Mode</h2>
         <button id="register-122-value" type="button" aria-haspopup="listbox" aria-expanded="false">--</button>
@@ -48,6 +66,9 @@
     </form>
 
     <script>
+        const connectionForm = document.getElementById('connection-form');
+        const modbusIp = document.getElementById('modbus-ip');
+        const connectionStatus = document.getElementById('connection-status');
         const form = document.getElementById('formulary');
         const slider = document.getElementById('value-slider');
         const sliderValue = document.getElementById('slider-value');
@@ -59,6 +80,15 @@
             3: 'Dp Control',
             4: 'Position Control'
         };
+
+        connectionForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            window.electronAPI.connectModbus(modbusIp.value.trim());
+        });
+
+        window.electronAPI.onConnectionStatusUpdated((status) => {
+            connectionStatus.textContent = status;
+        });
 
         register122Value.addEventListener('click', () => {
             const isExpanded = register122Value.getAttribute('aria-expanded') === 'true';
