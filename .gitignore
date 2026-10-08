@@ -38,6 +38,9 @@ pnpm-debug.log*
 *.swo
 .vs/
 
+# Arquivos de referência do design
+reference.html
+
 # Arquivos do Sistema Operacional
 .DS_Store
 Thumbs.db
