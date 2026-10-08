@@ -547,10 +547,18 @@
             3: 'Dp Control',
             4: 'Position Control'
         };
+        const savedModbusIp = localStorage.getItem('mini-scada-imi-ta.modbus-ip');
+
+        if (savedModbusIp) {
+            modbusIp.value = savedModbusIp;
+        }
 
         connectionForm.addEventListener('submit', (event) => {
             event.preventDefault();
-            window.electronAPI.connectModbus(modbusIp.value.trim());
+            const host = modbusIp.value.trim();
+            modbusIp.value = host;
+            localStorage.setItem('mini-scada-imi-ta.modbus-ip', host);
+            window.electronAPI.connectModbus(host);
         });
 
         window.electronAPI.onConnectionStatusUpdated((status) => {
